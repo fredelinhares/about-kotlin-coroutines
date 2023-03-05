@@ -458,9 +458,9 @@ override suspend fun doWork(): Result = withContext(ioDispatcher) {
  
 ## Doubts that may arise
 
-    * When to use GlobalScope.launch?
-    * When to use withContext?
-    * When to use lifecycleScope.launch?
-    * viewModelScope.launch -> this can helps to refactor something?
+    * When to use GlobalScope.launch?<br>
+    * When to use withContext?<br>
+    * When to use lifecycleScope.launch?<br>
+    * viewModelScope.launch -> this can helps to refactor something?<br>
     * We can use Dispatchers.IO inside Dispatchers.Main and vice versa?
 
