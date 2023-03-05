@@ -10,17 +10,9 @@ Kotlin coroutines are a concurrency design pattern introduced in Kotlin 1.3 that
 
 Concurrency is the ability of a program to perform multiple tasks at the same time, whereas parallelism is the ability to execute multiple tasks simultaneously on multiple processors. <u>Coroutines provide concurrency, not parallelism</u>.
 
-- Concurrency and parallelism are related but distinct concepts in computer science.
+2.1 Concurrency and parallelism are related but distinct concepts in computer science.
 Concurrency refers to a program's ability to handle multiple tasks or processes at the same time, without necessarily executing them simultaneously. This can be achieved through techniques like coroutines, where the program can switch between tasks as needed, giving the illusion of simultaneous execution.
 
-- Parallelism, on the other hand, refers to executing multiple tasks simultaneously on multiple processors or cores. This typically requires more hardware resources and a different approach to programming than concurrency.
-While coroutines provide concurrency, they do not inherently provide parallelism since they do not execute tasks simultaneously on multiple processors. However, coroutines can be combined with parallel programming techniques to achieve both concurrency and parallelism.
-
->> Examples
-
-Dummie and general first example:
-
-// Concurrency example
 fun doLongTask() {
     GlobalScope.launch {
         // This coroutine runs asynchronously, allowing other code to execute at the same time
@@ -29,6 +21,15 @@ fun doLongTask() {
         longOperation()
     }
 }
+
+2.2 Parallelism, on the other hand, refers to executing multiple tasks simultaneously on multiple processors or cores. This typically requires more hardware resources and a different approach to programming than concurrency.
+While coroutines provide concurrency, they do not inherently provide parallelism since they do not execute tasks simultaneously on multiple processors. However, coroutines can be combined with parallel programming techniques to achieve both concurrency and parallelism.
+
+>> Examples
+
+Dummie and general first example:
+
+ 
 
 // Parallelism example
 fun doLongTaskInParallel() {
