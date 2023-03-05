@@ -455,6 +455,7 @@ override suspend fun doWork(): Result = withContext(ioDispatcher) {
     }
 ```
  <br>
+ 
 ## Doubts that may arise
 
     * When to use GlobalScope.launch?
