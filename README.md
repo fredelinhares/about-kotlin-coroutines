@@ -27,12 +27,7 @@ fun doLongTask() {
 2.2 Parallelism, on the other hand, refers to executing multiple tasks simultaneously on multiple processors or cores. This typically requires more hardware resources and a different approach to programming than concurrency.
 While coroutines provide concurrency, they do not inherently provide parallelism since they do not execute tasks simultaneously on multiple processors. However, coroutines can be combined with parallel programming techniques to achieve both concurrency and parallelism.
 
->> Examples
-
-Dummie and general first example:
-
- 
-
+```kotlin
 // Parallelism example
 fun doLongTaskInParallel() {
     val numCores = Runtime.getRuntime().availableProcessors()
@@ -44,6 +39,7 @@ fun doLongTaskInParallel() {
     }
     executor.shutdown()
 }
+```
 
 Kotlin coroutines can be combined with parallel programming techniques to achieve both concurrency and parallelism. Here are some ways to achieve this:
 
