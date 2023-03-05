@@ -463,4 +463,6 @@ override suspend fun doWork(): Result = withContext(ioDispatcher) {
     * When to use lifecycleScope.launch?
     * viewModelScope.launch -> this can helps to refactor something?
     * We can use Dispatchers.IO inside Dispatchers.Main and vice versa?
+    * Where to use Dispatchers.Main?
+    * Where to use Dispatchers.IO?
 
