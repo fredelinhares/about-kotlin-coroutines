@@ -327,5 +327,131 @@ We can also create your own custom dispatcher by implementing the CoroutineDispa
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
+## Some examples of Coroutines Dispatchers used in open source projects
 
+* [ChatGPT](https://github.com/skydoves/chatgpt-android):
 
+```kotlin
+-> @Module
+@InstallIn(SingletonComponent::class)
+internal object DispatchersModule {
+
+  @Provides
+  @Dispatcher(ChatGPTDispatchers.IO)
+  fun providesIODispatcher(): CoroutineDispatcher = Dispatchers.IO
+} 
+
+-> internal class GPTMessageRepositoryImpl @Inject constructor(
+  @Dispatcher(ChatGPTDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+  private val chatGptService: ChatGPTService
+) : GPTMessageRepository {
+ 
+ 
+-> init {
+    viewModelScope.launch {
+      gptChannelRepository.streamUserFlow().collect { user ->
+        user?.let { gptChannelRepository.joinTheCommonChannel(it) }
+      }
+    }
+  }   
+```
+* [nowinandroid](https://github.com/android/nowinandroid):
+
+```kotlin  
+class FakeNewsRepository @Inject constructor(
+    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
+    private val datasource: FakeNiaNetworkDataSource,
+) : NewsRepository {
+ 
+override suspend fun doWork(): Result = withContext(ioDispatcher) {
+        traceAsync("Sync", 0) {
+            analyticsHelper.logSyncStarted()
+
+            // First sync the repositories in parallel
+            val syncedSuccessfully = awaitAll(
+                async { topicRepository.sync() },
+                async { newsRepository.sync() },
+            ).all { it }
+
+            analyticsHelper.logSyncFinished(syncedSuccessfully)
+
+            if (syncedSuccessfully) {
+                Result.success()
+            } else {
+                Result.retry()
+            }
+        }
+} 
+
+@OptIn(ExperimentalSerializationApi::class)
+    override suspend fun getNewsResources(ids: List<String>?): List<NetworkNewsResource> =
+        withContext(ioDispatcher) {
+            assets.open(NEWS_ASSET).use(networkJson::decodeFromStream)
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+    override suspend fun getTopics(ids: List<String>?): List<NetworkTopic> =
+        withContext(ioDispatcher) {
+            assets.open(TOPICS_ASSET).use(networkJson::decodeFromStream)
+}
+```
+* [firefox](https://github.com/mozilla-mobile/firefox-android):
+
+```kotlin 
+-> val sessionManager = sessionManager(engine).apply {
+    // We launch a coroutine on the main thread. Once a snapshot has been restored
+    // we want to continue with it on the main thread.
+    GlobalScope.launch(Dispatchers.Main) {
+        // We restore on the IO dispatcher to not block the main thread:
+        val snapshot = async(Dispatchers.IO) {
+            val bundle = sessionStorage.restore()
+            // If we got a bundle then restore the snapshot from it
+            bundle.restoreSnapshot(engine)
+        }
+
+        // If we got a snapshot then restore it now:
+        snapshot.await()?.let { sessionManager.restore(it) }
+    }
+} 
+
+-> open class FenixApplication : LocaleAwareApplication(), Provider {
+
+  // We avoid blocking the main thread on startup by calling into Glean on the background thread.
+  @OptIn(DelicateCoroutinesApi::class)
+  GlobalScope.launch(Dispatchers.IO) {
+    PerfStartup.applicationOnCreate.accumulateSamples(listOf(durationMillis))
+  } 
+
+   // We avoid blocking the main thread on startup by setting startup metrics on the background thread.
+   val store = components.core.store
+   GlobalScope.launch(Dispatchers.IO) {
+   setStartupMetrics(store, settings())
+   }
+ 
+    @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
+    private fun restoreBrowserState() = GlobalScope.launch(Dispatchers.Main) {
+        val store = components.core.store
+        val sessionStorage = components.core.sessionStorage
+
+        components.useCases.tabsUseCases.restore(sessionStorage, settings().getTabTimeout())
+
+        // Now that we have restored our previous state (if there's one) let's setup auto saving the state while
+        // the app is used.
+        sessionStorage.autoSave(store)
+            .periodicallyInForeground(interval = 30, unit = TimeUnit.SECONDS)
+            .whenGoingToBackground()
+            .whenSessionsChange()
+    } 
+
+-> AddonDetailsFragment
+
+    override fun showUpdaterDialog(addon: Addon) {
+        viewLifecycleOwner.lifecycleScope.launch(Main) {
+            val updateAttempt = withContext(IO) {
+                updateAttemptStorage.findUpdateAttemptBy(addon.id)
+            }
+            updateAttempt?.showInformationDialog(requireContext())
+        }
+    }
+```
+ 
