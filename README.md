@@ -2,11 +2,11 @@
 
 This is just a humble compendium about coroutines.
 
-1. Introduction  
+> Introduction  
 
 Kotlin coroutines are a concurrency design pattern introduced in Kotlin 1.3 that enables developers to write asynchronous, non-blocking code in a more readable and efficient way. 
 
-2. Concurrency vs. Parallelism when talk about Coroutines
+> Concurrency vs. Parallelism when talk about Coroutines
 
 Concurrency is the ability of a program to perform multiple tasks at the same time, whereas parallelism is the ability to execute multiple tasks simultaneously on multiple processors. 
 
