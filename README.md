@@ -1,5 +1,7 @@
 ## About Coroutines
 
+This is just a humble compendium about coroutines.
+
 >> Theory: the beginning
 
 > Concurrency vs. Parallelism when talk about Coroutines:
