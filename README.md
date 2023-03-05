@@ -2,13 +2,15 @@
 
 This is just a humble compendium about coroutines.
 
-1. Theory  
+1. Introduction  
 
 Kotlin coroutines are a concurrency design pattern introduced in Kotlin 1.3 that enables developers to write asynchronous, non-blocking code in a more readable and efficient way. 
 
 2. Concurrency vs. Parallelism when talk about Coroutines
 
-Concurrency is the ability of a program to perform multiple tasks at the same time, whereas parallelism is the ability to execute multiple tasks simultaneously on multiple processors. <u>Coroutines provide concurrency, not parallelism</u>.
+Concurrency is the ability of a program to perform multiple tasks at the same time, whereas parallelism is the ability to execute multiple tasks simultaneously on multiple processors. 
+
+Coroutines provide concurrency, not parallelism!
 
 2.1 Concurrency and parallelism are related but distinct concepts in computer science.
 Concurrency refers to a program's ability to handle multiple tasks or processes at the same time, without necessarily executing them simultaneously. This can be achieved through techniques like coroutines, where the program can switch between tasks as needed, giving the illusion of simultaneous execution.
@@ -28,7 +30,6 @@ fun doLongTask() {
 While coroutines provide concurrency, they do not inherently provide parallelism since they do not execute tasks simultaneously on multiple processors. However, coroutines can be combined with parallel programming techniques to achieve both concurrency and parallelism.
 
 ```kotlin
-// Parallelism example
 fun doLongTaskInParallel() {
     val numCores = Runtime.getRuntime().availableProcessors()
     val executor = Executors.newFixedThreadPool(numCores)
@@ -41,10 +42,13 @@ fun doLongTaskInParallel() {
 }
 ```
 
-Kotlin coroutines can be combined with parallel programming techniques to achieve both concurrency and parallelism. Here are some ways to achieve this:
+3. Kotlin coroutines can be combined with parallel programming techniques to achieve both concurrency and parallelism. Here are some ways to achieve this:
 
--> Using Dispatchers: Kotlin coroutines come with a set of dispatchers that can be used to specify the execution context for coroutines. By using Dispatchers.Default, multiple coroutines can run concurrently on multiple threads, utilizing all available processors. This can provide both concurrency and parallelism:
+3.1 Using Dispatchers: Kotlin coroutines come with a set of dispatchers that can be used to specify the execution context for coroutines. 
 
+In the example below, there is a demonstration of concurrency:
+
+```kotlin
 // create a coroutine scope with the default dispatcher
 val coroutineScope = CoroutineScope(Dispatchers.Default)
 
@@ -55,8 +59,8 @@ coroutineScope.launch {
     val combinedResult = result1.await() + result2.await()
     updateUI(combinedResult)
 }
-
-This example demonstrates concurrency. The async function is used to launch two coroutines concurrently, which can execute on different threads. When the await function is called on each deferred value, the coroutine suspends its execution until the corresponding computation is complete, but allows the other coroutine to continue executing concurrently. This allows the program to make progress on multiple tasks at the same time, achieving concurrency.
+```
+The async function is used to launch two coroutines concurrently, which can execute on different threads. When the await function is called on each deferred value, the coroutine suspends its execution until the corresponding computation is complete, but allows the other coroutine to continue executing concurrently. This allows the program to make progress on multiple tasks at the same time, achieving concurrency.
 
 Attention: However, note that this example uses the Dispatchers.Default dispatcher, which is designed for CPU-bound work and creates a thread pool with a fixed number of threads. This means that the coroutines will execute concurrently, but not necessarily in parallel on multiple processors.
 
