@@ -12,7 +12,8 @@ Concurrency is the ability of a program to perform multiple tasks at the same ti
 
 * <span style="color: #00FF00">Coroutines provide concurrency, not parallelism!</span>
 
-2.1 Concurrency and parallelism are related but distinct concepts in computer science.
+Concurrency and parallelism are related but distinct concepts in computer science.
+
 Concurrency refers to a program's ability to handle multiple tasks or processes at the same time, without necessarily executing them simultaneously. This can be achieved through techniques like coroutines, where the program can switch between tasks as needed, giving the illusion of simultaneous execution.
 
 ```kotlin
@@ -26,7 +27,7 @@ fun doLongTask() {
 }
 ```
 
-2.2 Parallelism, on the other hand, refers to executing multiple tasks simultaneously on multiple processors or cores. This typically requires more hardware resources and a different approach to programming than concurrency.
+Parallelism, on the other hand, refers to executing multiple tasks simultaneously on multiple processors or cores. This typically requires more hardware resources and a different approach to programming than concurrency.
 While coroutines provide concurrency, they do not inherently provide parallelism since they do not execute tasks simultaneously on multiple processors. However, coroutines can be combined with parallel programming techniques to achieve both concurrency and parallelism.
 
 ```kotlin
@@ -42,9 +43,11 @@ fun doLongTaskInParallel() {
 }
 ```
 
-3. Kotlin coroutines can be combined with parallel programming techniques to achieve both concurrency and parallelism. Here are some ways to achieve this:
+> Kotlin coroutines can be combined with parallel programming techniques to achieve both concurrency and parallelism. 
 
-3.1 Using Dispatchers: Kotlin coroutines come with a set of dispatchers that can be used to specify the execution context for coroutines. 
+Here are some ways to achieve this:
+
+* Using Dispatchers: Kotlin coroutines come with a set of dispatchers that can be used to specify the execution context for coroutines. 
 
 In the example below, there is a demonstration of concurrency:
 
@@ -62,10 +65,10 @@ coroutineScope.launch {
 ```
 The async function is used to launch two coroutines concurrently, which can execute on different threads. When the await function is called on each deferred value, the coroutine suspends its execution until the corresponding computation is complete, but allows the other coroutine to continue executing concurrently. This allows the program to make progress on multiple tasks at the same time, achieving concurrency.
 
-Attention: However, note that this example uses the Dispatchers.Default dispatcher, which is designed for CPU-bound work and creates a thread pool with a fixed number of threads. This means that the coroutines will execute concurrently, but not necessarily in parallel on multiple processors.
+* Attention: However, note that this example uses the Dispatchers.Default dispatcher, which is designed for CPU-bound work and creates a thread pool with a fixed number of threads. This means that the coroutines will execute concurrently, but not necessarily in parallel on multiple processors.
 
 We can make an adaptation of the same example using Dispatchers.Default.asExecutor() to achieve a explicit parallelism:
-
+```kotlin
 // create a coroutine scope with a custom dispatcher that provides parallelism
 val threadPool = Executors.newFixedThreadPool(2).asCoroutineDispatcher()
 val coroutineScope = CoroutineScope(threadPool)
@@ -77,12 +80,12 @@ coroutineScope.launch {
     val combinedResult = result1.await() + result2.await()
     updateUI(combinedResult)
 }
-
+```
 In this example, we create a custom dispatcher using Executors.newFixedThreadPool(2).asCoroutineDispatcher(). This creates a thread pool with two threads that can execute coroutines in parallel on multiple processors. We then create a coroutine scope using this dispatcher and launch two coroutines using the async function to compute result1 and result2. The await function is used to wait for the completion of each computation, and the results are combined and passed to updateUI.
 With this implementation, the coroutines can execute concurrently and in parallel, achieving both concurrency and parallelism.
 
-> The same example using Dispatchers.IO:
-
+* The same example using Dispatchers.IO:
+```kotlin
 // create a coroutine scope with the IO dispatcher that provides parallelism
 val coroutineScope = CoroutineScope(Dispatchers.IO)
 
@@ -95,15 +98,15 @@ coroutineScope.launch {
         updateUI(combinedResult)
     }
 }
-
+```
 Using Dispatchers.IO does not guarantee parallelism, but it can provide parallelism under certain conditions. The Dispatchers.IO dispatcher uses a thread pool that can grow or shrink dynamically based on demand, which means that it can allocate multiple threads to execute multiple coroutines in parallel. However, whether or not the coroutines actually execute in parallel depends on a number of factors, such as the available CPU cores, the workload of other applications running on the system, and the nature of the tasks being executed.
 
 In general, Dispatchers.IO is optimized for I/O-bound tasks, such as network requests or disk operations, that involve waiting for external resources and are typically not CPU-intensive. In such cases, the coroutines can suspend their execution while waiting for the I/O operations to complete, allowing other coroutines to execute in parallel on different threads.
 
 However, for CPU-bound tasks that do not involve waiting for external resources, using Dispatchers.Default or a custom thread pool with a fixed number of threads may be more appropriate to achieve parallelism, as this can allocate a fixed number of threads that can execute the coroutines in parallel on multiple CPU cores.
 
--> Using parallel collections: Kotlin provides parallel versions of its collections library, such as asFlow().parallel(), which can be used to process large amounts of data in parallel using multiple coroutines. This can provide both concurrency and parallelism by executing tasks concurrently on multiple threads and processors:
-
+* Using parallel collections: Kotlin provides parallel versions of its collections library, such as asFlow().parallel(), which can be used to process large amounts of data in parallel using multiple coroutines. This can provide both concurrency and parallelism by executing tasks concurrently on multiple threads and processors:
+```kotlin
 // create a list of data to process in parallel using coroutines
 val dataList = listOf("data1", "data2", "data3", "data4", "data5")
 
@@ -119,9 +122,9 @@ coroutineScope.launch {
     val combinedResult = resultFlow.reduce { acc, result -> acc + result }
     updateUI(combinedResult)
 }
-
--> Using actors: Actors are a concurrency design pattern that can be used with coroutines to achieve parallelism. Actors can handle concurrent requests and update shared state in a thread-safe manner, allowing multiple coroutines to execute simultaneously without interfering with each other:
-
+```
+* Using actors: Actors are a concurrency design pattern that can be used with coroutines to achieve parallelism. Actors can handle concurrent requests and update shared state in a thread-safe manner, allowing multiple coroutines to execute simultaneously without interfering with each other:
+```kotlin
 // create an actor to handle concurrent requests and update shared state
 class SharedStateActor : CoroutineScope by CoroutineScope(Dispatchers.Default) {
     private var sharedState = 0
@@ -178,8 +181,8 @@ coroutineScope.launch {
     coroutineScope.coroutineContext.cancelChildren()
     sharedStateActor.cleanUp()
 }
-
-> So, you could ask: its usual use such parallelism approach in an android mobile application?
+```
+* So, you could ask: its usual use such parallelism approach in an android mobile application?
 
 In general, parallelism can be beneficial when performing CPU-bound tasks that can be split into multiple independent tasks that can run in parallel. For example, if your application needs to download and process multiple large files concurrently, using parallelism can speed up the processing time.
 
