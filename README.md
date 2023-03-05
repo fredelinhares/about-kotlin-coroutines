@@ -2,11 +2,11 @@
 
 This is just a humble compendium about coroutines.
 
-> Introduction  
+* Introduction  
 
 Kotlin coroutines are a concurrency design pattern introduced in Kotlin 1.3 that enables developers to write asynchronous, non-blocking code in a more readable and efficient way. 
 
-> Concurrency vs. Parallelism when talk about Coroutines
+* Concurrency vs. Parallelism when talk about Coroutines
 
 Concurrency is the ability of a program to perform multiple tasks at the same time, whereas parallelism is the ability to execute multiple tasks simultaneously on multiple processors. 
 
@@ -188,22 +188,21 @@ In general, parallelism can be beneficial when performing CPU-bound tasks that c
 
 However, parallelism also has its downsides, such as increased resource usage and potential synchronization issues. In a mobile device, if not managed in a good way, It could be little dangerous, since many android devices have limited memory resources…
 
-
-> More stuff about coroutines
+* More stuff about coroutines
 
 Kotlin coroutines are a powerful feature that enables developers to write asynchronous code. Ok, you already know that!
 
 Here are some key ideas about such stack:
 
-1. Suspend Functions: a suspend function is a function that can be paused and resumed later without blocking the current thread. These functions are the building blocks of coroutines and can be identified by the suspend modifier in their signature.
-
+* Suspend Functions: a suspend function is a function that can be paused and resumed later without blocking the current thread. These functions are the building blocks of coroutines and can be identified by the suspend modifier in their signature.
+```kotlin
 suspend fun fetchData(): String {
     delay(1000) // This is a built-in suspend function that pauses the coroutine for a specified time
     return "Data from the network"
 }
-
-2. Continuation Passing Style: coroutines use continuation passing style (CPS) to achieve their asynchronous behavior. CPS is a programming technique that passes the control flow of a program to a callback function when an operation is not yet complete.
-
+```
+* Continuation Passing Style: coroutines use continuation passing style (CPS) to achieve their asynchronous behavior. CPS is a programming technique that passes the control flow of a program to a callback function when an operation is not yet complete.
+```kotlin
 fun doLongOperation(callback: (result: Int) -> Unit) {
     // This function does a long operation and then passes the result to the callback function
     GlobalScope.launch {
@@ -211,10 +210,9 @@ fun doLongOperation(callback: (result: Int) -> Unit) {
         callback(42)
     }
 }
-
-
-3. Coroutine Context: a set of rules that define how a coroutine should behave. It specifies which thread or thread pool a coroutine should run on, as well as other properties such as exception handling and cancellation behavior. 
-
+```
+* Coroutine Context: a set of rules that define how a coroutine should behave. It specifies which thread or thread pool a coroutine should run on, as well as other properties such as exception handling and cancellation behavior. 
+```kotlin
 val coroutineContext = Dispatchers.IO + CoroutineName("fetchData")
 
 fun fetchData(): String = runBlocking(coroutineContext) {
@@ -223,9 +221,9 @@ fun fetchData(): String = runBlocking(coroutineContext) {
     delay(1000)
     "Data from the network"
 }
-
-4. Launching a Coroutine: we can use launch function from the kotlinx.coroutines package. This function creates a new coroutine and runs it in the background.
-
+```
+* Launching a Coroutine: we can use launch function from the kotlinx.coroutines package. This function creates a new coroutine and runs it in the background.
+```kotlin
 fun doLongOperation() {
     GlobalScope.launch {
         // This coroutine runs in the background and doesn't block the UI thread.
@@ -236,9 +234,9 @@ fun doLongOperation() {
         }
     }
 }
-
-5. Suspending a Coroutine: when a coroutine encounters a suspend function, it can pause its execution and return control to the calling code. The calling code can then continue to execute until the suspend function is ready to resume.
-
+```
+* Suspending a Coroutine: when a coroutine encounters a suspend function, it can pause its execution and return control to the calling code. The calling code can then continue to execute until the suspend function is ready to resume.
+```kotlin
 suspend fun fetchData(): String {
     // This coroutine pauses until the network request is complete.
     val result = withContext(Dispatchers.IO) {
@@ -246,10 +244,9 @@ suspend fun fetchData(): String {
     }
     return result
 }
-
-
-6. Coroutine Scope: scope is an object that manages the lifecycle of coroutines. It ensures that all launched coroutines are cancelled when the scope is cancelled.  
-
+```
+* Coroutine Scope: scope is an object that manages the lifecycle of coroutines. It ensures that all launched coroutines are cancelled when the scope is cancelled.  
+```kotlin
 class MyActivity : AppCompatActivity(), CoroutineScope {
     private lateinit var job: Job
 
@@ -276,9 +273,9 @@ class MyActivity : AppCompatActivity(), CoroutineScope {
         }
     }
 }
-
-7. Cancellation: coroutines can be cancelled using the cancel function or by throwing a CancellationException. When a coroutine is cancelled, all of its children coroutines are also cancelled.
-
+```
+* Cancellation: coroutines can be cancelled using the cancel function or by throwing a CancellationException. When a coroutine is cancelled, all of its children coroutines are also cancelled.
+```kotlin
 fun doLongOperation() {
     val job = GlobalScope.launch {
         delay(5000)
@@ -290,9 +287,9 @@ fun doLongOperation() {
         job.cancel()
     }
 }
-
-8. Error Handling: in coroutines is done using try/catch blocks or by propagating exceptions up the call stack. You can also use the CoroutineExceptionHandler to handle uncaught exceptions in coroutines.
-  
+```
+* Error Handling: in coroutines is done using try/catch blocks or by propagating exceptions up the call stack. You can also use the CoroutineExceptionHandler to handle uncaught exceptions in coroutines.
+```kotlin  
  fun fetchData() {
     GlobalScope.launch(CoroutineExceptionHandler { _, exception ->
         // This code runs when an unhandled exception occurs in the coroutine.
@@ -310,9 +307,8 @@ fun doLongOperation() {
         }
     }
 }
-
-
->> Dispatchers: what it is?
+```
+* Dispatchers: what it is?
 
 Earlier I talked about using dispatchers to get concurrency. But what is Dispatchers?
 
@@ -322,13 +318,13 @@ You can specify a dispatcher to control where the coroutine runs. Dispatchers pr
 
 So... what are the types of Dispatchers?
 
-1. Main - runs the coroutine on the main thread of the Android UI thread.
-2. IO - optimized for disk or network IO operations, runs on a shared thread pool that is designed to handle IO tasks.
-3. Default - optimized for CPU-intensive tasks, runs on a shared thread pool that is designed to handle CPU-bound tasks.
-4. Unconfined - runs the coroutine on the current thread until the first suspension point, after which it resumes on a different thread.
-
+* Main - runs the coroutine on the main thread of the Android UI thread.
+* IO - optimized for disk or network IO operations, runs on a shared thread pool that is designed to handle IO tasks.
+* Default - optimized for CPU-intensive tasks, runs on a shared thread pool that is designed to handle CPU-bound tasks.
+* Unconfined - runs the coroutine on the current thread until the first suspension point, after which it resumes on a different thread.
 
 We can also create your own custom dispatcher by implementing the CoroutineDispatcher interface, but to be preetty honest, this is unusual.
+
 
 
 
