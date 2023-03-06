@@ -459,11 +459,12 @@ override suspend fun doWork(): Result = withContext(ioDispatcher) {
 ## Doubts that may arise
 
 * Use GlobalScope.launch its a good approach?
+
 Generally not a good approach. The reason is that GlobalScope creates a global scope for coroutines that is not tied to any particular component or lifecycle. This means that coroutines launched using GlobalScope continue running even if the calling component or lifecycle is destroyed, which can lead to memory leaks and other problems.
  
-    * When to use withContext?
-    * When to use lifecycleScope.launch?
-    * viewModelScope.launch -> this can helps to refactor something?
-    * We can use Dispatchers.IO inside Dispatchers.Main and vice versa?
-    * Where to use Dispatchers.Main?
-    * Where to use Dispatchers.IO?
+* When to use withContext?
+* When to use lifecycleScope.launch?
+* viewModelScope.launch -> this can helps to refactor something?
+* We can use Dispatchers.IO inside Dispatchers.Main and vice versa?
+* Where to use Dispatchers.Main?
+* Where to use Dispatchers.IO?
